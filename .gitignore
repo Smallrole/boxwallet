@@ -1,0 +1,14 @@
+*.conf
+*.cfg
+*.html
+*.pyc
+*.log
+*.xlsx
+*.img
+*.png
+TestScript/
+.idea/workspace.xml
+Configuration/
+Share/xlrd/doc/
+TestCase/
+TestResult/
