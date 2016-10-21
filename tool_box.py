@@ -42,7 +42,7 @@ class ${ClassName}(unittest.TestCase):
             self.test_host = GlobalConfiguration.get_service_address()  # 环境选择
             self.loger_user.info('------ 初始化 ${ClassDetails} 测试用例结束 ------ ')
         except Exception, e:
-            self.loger_user.error('初始化错误信息:%s' %e)
+            self.loger_user.error('初始化错误信息:%s' % e)
 
 '''
 
@@ -83,21 +83,22 @@ class ${ClassName}(unittest.TestCase):
     def check_the_database_data(self, test_case_line):                                    # 检查数据库数据
         self.loger_user.info("开始数据库数据查检")
         ex_table = self.table.sheet_by_name('data')
-        data_comparison = eval(ex_table.cell(test_case_line, 9).value.encode("utf-8"))    # 参考数据
+        data_comparison = eval(ex_table.cell(test_case_line, 9).value.encode("utf-8"))     # 参考数据
         database_data = eval(ex_table.cell(test_case_line, 10).value.encode("utf-8"))      # 数据库数据
-        sql_statements = eval(ex_table.cell(test_case_line, 11).value.encode("utf-8"))    # 查询语句
+        sql_statements = eval(ex_table.cell(test_case_line, 11).value.encode("utf-8"))     # 查询语句
         self.loger_user.info("%s" % sql_statements)
         state, content = DataHandle.PerformDBASql(sql_statements, self.loger_user)          # 执行sql，查询数据
-        if state !=0:
-            database_data = eval(DataHandle.DataHandle('2', database_data, content, self.loger_user)) # 替换数据
+        if state != 0:
+            database_data = eval(DataHandle.DataHandle('2', database_data, content, self.loger_user))  # 替换数据
             self.loger_user.debug("替换数据完成")
         else:
-            self.loger_user.info("数据操作失败:%s  **" %content)
+            self.loger_user.info("数据操作失败:%s  **" % content)
             self.assertTrue(state, content)
         result, info_a, info_b = DataHandle.cmp_json(database_data, data_comparison, self.loger_user)
         if result != '1':                                           # 调用断言方式 返回1 正常  ，非1不正确
-            self.loger_user.info('数据库数据对比失败 数据库的数据:\\n响应返回的值: %s 参考的数据 :%s' % (str(info_a), str(info_b)))
-            self.assertTrue(result, ('数据库的数据值：'+ info_a + '   参考的数据值：'+ info_b))
+            self.loger_user.info('数据库数据对比失败 数据库的数据:\\n响应返回的值: %s 参考的数据 :%s'
+            % (str(info_a), str(info_b)))
+            self.assertTrue(result, ('数据库的数据值：' + info_a + '   参考的数据值：'+ info_b))
         self.loger_user.info("数据库数据检查结束")
 
     def results_the_assertion(self, state, info_a, info_b, test_case_line_num):       # 函数功能结果断言
@@ -108,11 +109,11 @@ class ${ClassName}(unittest.TestCase):
             self.loger_user.info('执行用例状态:失败 第 ' + str(test_case_line_num) + '条   ' + test_case_name + ' 测试用例结束')
             self.assertEqual(info_a, info_b)
         elif state in(1, 3):     # 1 执行正常流程成功状态  3 执行不完整流程成功状态
-            self.loger_user.debug('状态：%s  内容_A：%s  内容_b：%s' %(state, info_a, info_b))
+            self.loger_user.debug('状态：%s  内容_A：%s  内容_b：%s' % (state, info_a, info_b))
             self.loger_user.info('执行用例状态:通过 第 ' + str(test_case_line_num) + '条   ' + test_case_name + ' 测试用例结束')
             self.assertEqual(info_a, info_b)
-        elif state ==2:
-            self.loger_user.debug('状态：%s  内容_A：%s  内容_b：%s' %(state, info_a, info_b))
+        elif state == 2:
+            self.loger_user.debug('状态：%s  内容_A：%s  内容_b：%s' % (state, info_a, info_b))
             self.loger_user.info('执行用例状态:失败 第 ' + str(test_case_line_num) + '条   ' + test_case_name + ' 测试用例结束')
             self.fail(info_b)
         else:
@@ -125,7 +126,7 @@ class ${ClassName}(unittest.TestCase):
 '''
 
 # 功能组合模板
-function_Content = '''        state, interface, info=DataHandle.function_core(table_name, ${function_line}, test_case, self.test_host, self.loger_user)
+function_Content = '''        state, interface, info = DataHandle.function_core(table_name, ${function_line}, test_case, self.test_host, self.loger_user)
         self.loger_user.debug('状态：%s  interface：%s  info：%s' % (state, interface, info))
         if state != 1 or state == 3:
             return state, interface, info
@@ -155,7 +156,7 @@ function_Content_case = '''    def ${test_case_name}(self):
         if set_out == '1':
             set_out_sql = eval(ex_table.cell(test_case_line_num, 4).value.encode("utf-8"))  # 获取sql
             self.data_preparation(set_out_sql)
-        state, info_a, info_b=self.${function}(self.table, test_case_line_num)
+        state, info_a, info_b = self.${function}(self.table, test_case_line_num)
         # 增加数据库数据对比
         if state == 1 and check_data_sign == '1':
             self.check_the_database_data(test_case_line_num)
@@ -189,7 +190,6 @@ TestCaseContent = '''    def ${function}(self):
             self.loger_user.debug('状态：%s  内容_A：%s  内容_b：%s' % (state, info_a, info_b))
             self.loger_user.info('执行第 ${line} 条 ${FunctionDescribe} 测试用例结束')
             self.assertEqual(info_a, info_b)
-
         else:
             self.loger_user.info('执行第 ${line} 条 ${FunctionDescribe} 测试用例结束')
             self.assertEqual(info_a, info_b)
@@ -259,10 +259,9 @@ error_info = {}
 def new_file(case_file, current_path, table, content=Content, line=1, feature_identifier='', logg_user=LoggUser):
     try:
         logg_user.debug('调用 new_file 函数。case_file：%s current_path:%s table:%s content:%s line:%s feature_identifier:%s'
-                        %(case_file, current_path, table, content, line, feature_identifier))
+                        % (case_file, current_path, table, content, line, feature_identifier))
         ex_table = table
         case_path = current_path
-        befroe_lien = line
         way = get_chars(case_path, 2)
         logg_user.debug('way:%s  lien:%s case_file：%s  current_path:%s table:%s  feature_identifier:%s'
                         % (way, line, case_file, current_path, table, feature_identifier))
@@ -292,59 +291,59 @@ def new_file(case_file, current_path, table, content=Content, line=1, feature_id
                 auto_test_name.writelines(content)
                 return auto_test_name, unit_test_name, line
         elif way == 'Function':
-            line = 1
+            befroe_lien = line
             while (1):
-                table = ex_table.sheet_by_name('function')
-                class_name = table.cell(line, 3).value                   # 取功能标识
-                script_name = table.cell(line, 4).value                  # 取功能描述
-                test_sign = table.cell(line, 14).value.encode('utf-8')  # 是否生效标志
-                function_name = script_name                              # 保存原功能描述
-                test_case_name = lazy_pinyin(script_name, style=STYLE_TONE2)
-                script_name = ''
-                for num in range(len(test_case_name)):                 # 将功能描述拼接成字符串
-                    script_name = script_name + test_case_name[num]
-                logg_user.debug('way:%s  class_name:%s   功能函数的名字：%s' % (way, class_name, script_name))
-                if feature_identifier == '':
-                    table = ex_table.sheet_by_name('data')
-                    feature_identifier = table.cell(line, 2).value.encode('utf-8')
-                logg_user.info('feature_identifier:%s  len:%s' %(feature_identifier, len(feature_identifier)))
-                if check_there(feature_identifier, 'check_function') == 0:
-                    logg_user.info('data工作表中的第 %s 用例标为：%s  功能，在function表中没查对应的功能标识' %
-                                   (line, feature_identifier))
-                    return '0', 'function表中不存在的功能标识:'+ feature_identifier, befroe_lien
-                if class_name != feature_identifier:
-                    line += 1
-                    continue
-                if script_name == '':
-                    return '0', '创建结束(名字为空)',''
-                elif test_sign == '1':
-                    if class_name == feature_identifier:
-                        logg_user.info('第 %s 用例标为：%s ，标志为用例不生效，不创建文件' %(line, test_sign))
-                    line += 1
-                    continue
-                unit_file_name = case_path + script_name + '.py'
-                unit_test_name = class_name + 'Class'
-                logg_file_user = get_logg_user()
-                line = befroe_lien
                 table = ex_table.sheet_by_name('data')
-                test_case_line = table.cell(line, 0).value.encode('utf-8')
-                test_case_title = table.cell(line, 1).value.encode('utf-8')
-                functionality = table.cell(line, 2).value.encode('utf-8')
-                auto_test_name = open(unit_file_name, 'w')
-                logg_user.info('创建脚本:%s' % unit_file_name)
-                content = function_start_Content
-                content = Template(content)
-                logg_user.debug('case_file:%s  unit_test_name:%s  test_case_name:%s   functionality:%s'
+                test_case_service = table.cell(befroe_lien, 11).value.encode('utf-8')
+                if test_case_service == '1':
+                    befroe_lien += 1
+                    logg_user.info('data 第 %s 为：%s ，标志为用例不生效，不创建文件' % (befroe_lien, test_case_service))
+                    continue
+                feature_identifier = table.cell(befroe_lien, 2).value.encode('utf-8')      # 生效的测试用列标能标志
+                line = 1
+                while (1):
+                    table = ex_table.sheet_by_name('function')
+                    class_name = table.cell(line, 3).value                   # 取功能标识
+                    if class_name != feature_identifier:
+                        line += 1
+                        continue
+                    script_name = table.cell(line, 4).value                  # 取功能描述
+                    function_name = script_name                              # 保存原功能描述
+                    test_case_name = lazy_pinyin(script_name, style=STYLE_TONE2)
+                    script_name = ''
+                    for num in range(len(test_case_name)):                 # 将功能描述拼接成字符串
+                        script_name = script_name + test_case_name[num]
+                        logg_user.debug('way:%s  class_name:%s   功能函数的名字：%s' % (way, class_name, script_name))
+                        logg_user.info('feature_identifier:%s  len:%s' % (feature_identifier, len(feature_identifier)))
+                        if script_name == '':
+                            return '0', '创建结束(名字为空)',''
+                    if check_there(feature_identifier, 'check_function') == 0:
+                        logg_user.info('data工作表中的第 %s 用例标为：%s  功能，在function表中没查对应的功能标识'
+                                       % (line, feature_identifier))
+                        return '00', 'function表中不存在的功能标识:'+ feature_identifier, befroe_lien
+                    unit_file_name = case_path + script_name + '.py'
+                    unit_test_name = class_name + 'Class'
+                    logg_file_user = get_logg_user()
+                    table = ex_table.sheet_by_name('data')
+                    test_case_line = table.cell(befroe_lien, 0).value.encode('utf-8')
+                    test_case_title = table.cell(befroe_lien, 1).value.encode('utf-8')
+                    functionality = table.cell(befroe_lien, 2).value.encode('utf-8')
+                    auto_test_name = open(unit_file_name, 'w')
+                    logg_user.info('创建脚本:%s' % unit_file_name)
+                    content = function_start_Content
+                    content = Template(content)
+                    logg_user.debug('case_file:%s  unit_test_name:%s  test_case_name:%s   functionality:%s'
                                 % (case_file, unit_test_name, test_case_title, functionality))
-                content = content.substitute(ClassName=unit_test_name, ClassDetails=function_name, user=logg_file_user,
+                    content = content.substitute(ClassName=unit_test_name, ClassDetails=function_name, user=logg_file_user,
                                            CaseFile=case_file, test_case_line=test_case_line, test_case_name=test_case_title,
                                            functionality=functionality)
-                logg_user.debug('内容:%s' % content)
-                auto_test_name.writelines(content)
-                return auto_test_name, unit_test_name, line
+                    logg_user.debug('内容:%s' % content)
+                    auto_test_name.writelines(content)
+                    combination_function(auto_test_name, unit_test_name, function_Content)
+                    return auto_test_name, unit_test_name, befroe_lien
     except IndexError:
         logg_user.info('所有测试用例标志为不生效，不创建文件')
-        return '0', '创建结束(名字为空)',''
+        return '0', '创建结束(名字为空)', ''
 
 
 # 函数功能：组合接口  输入参数：脚本文件对象 功能标志 行号  日志用户  返回：状态  描述
@@ -364,8 +363,8 @@ def combination_function(auto_test_name, function_sign, test_case_content=functi
                 content = Template(test_case_content)
                 content = content.substitute(function_line=function_line_num)
                 auto_test_name.writelines(content)
-                LoggUser.debug('功能组合内容:%s' % content)
-            elif service_sign == '0' and next_function_sign == function_sign:
+                LoggUser.info('功能组合内容:\n%s' % content)
+            elif service_sign == '1' and next_function_sign == function_sign:
                 LoggUser.info('第 %s 条测试用例标志为不生效，不创建内容' %line)
             line += 1
         except IndexError:
@@ -380,6 +379,7 @@ def MakeTestCase(AutoTestName, UnitTestName, FilePath, table, CaseFile, TestCase
     LoggUser.debug('调用 MakeTestCase 函数。AutoTestName：%s UnitTestName:%s FilePath:%s table:%s CaseFile:%s'
                    ' TestCaseContent:%s line:%s EndTestCaseConten:%s LogPat:%s Conf:%s'
       % (AutoTestName, UnitTestName, FilePath, table, CaseFile,TestCaseContent, line, EndTestCaseConten, LogPat, Conf))
+    before_sign = ''
     while( 1 ):
         try:
             way = get_chars(FilePath, 2)
@@ -392,17 +392,20 @@ def MakeTestCase(AutoTestName, UnitTestName, FilePath, table, CaseFile, TestCase
                 test_sign = table.cell(line, 26).value.encode('utf-8')             # 用例生效标志
                 NesUnitTestName = script_name + 'Class'
             elif way == 'Function':
-                table = ex.sheet_by_name('function')
-                script_name = table.cell(line, 4).value                               # 取function 表的脚本名
                 table = ex.sheet_by_name('data')
                 TestCase = 'test_' + table.cell(line, 0).value                        # 取data 表的测试用例序号
                 TestDescribe = table.cell(line, 1).value.encode('utf-8')              # 取data 表的测试用例标题
                 function_data_sing = table.cell(line, 2).value.encode('utf-8')        # 取data 表的功能标志
-                test_sign = table.cell(line, 11).value.encode('utf-8')               # 用例生效标志
-                test_case_name = lazy_pinyin(script_name, style=STYLE_TONE2)
-                script_name = ''
-                for num in range(len(test_case_name)):                             # 将列表的拼音 拼接成字符串
-                    script_name = script_name + test_case_name[num]
+                test_sign = table.cell(line, 11).value.encode('utf-8')                # 用例生效标志
+                if before_sign == '':
+                    before_sign = function_data_sing
+                elif before_sign != function_data_sing:
+                    before_sign = function_data_sing
+                    script_name = check_there(function_data_sing, 'get_function_description')   # 取function 表的脚本名
+                    test_case_name = lazy_pinyin(script_name, style=STYLE_TONE2)
+                    script_name = ''
+                    for num in range(len(test_case_name)):                             # 将列表的拼音 拼接成字符串
+                        script_name = script_name + test_case_name[num]
                 NesUnitTestName = function_data_sing + 'Class'
                 LoggUser.debug('UnitTestName:%s  NesUnitTestName:%s  function_data_sing：%s '
                            % (UnitTestName, NesUnitTestName, function_data_sing))
@@ -422,7 +425,7 @@ def MakeTestCase(AutoTestName, UnitTestName, FilePath, table, CaseFile, TestCase
                         Content = Content.substitute(test_case_name=TestCase, FunctionDescribe=TestDescribe, line=line,
                                                    function=function_data_sing)
                     AutoTestName.writelines(Content)
-                    LoggUser.debug('测试用例内容:%s' % Content)
+                    LoggUser.info('测试用例内容:\n%s' % Content)
                 else:
                     LoggUser.info('第 %s 条测试用例，标志为不生效，不创建测试用例' %line)
                 line += 1
@@ -434,20 +437,17 @@ def MakeTestCase(AutoTestName, UnitTestName, FilePath, table, CaseFile, TestCase
                 logging.debug('CaseFile:%s FilePath:%s table:%s line:%s' % (CaseFile, FilePath, ex, line))  # 结束创建结尾
                 if way == 'AllUint':
                     TAutoTestName, TUnitTestName, line = new_file(CaseFile, FilePath, ex, line=line)
-                    if TAutoTestName == '0':
+                    if TAutoTestName in ('0', '00'):
                         LoggUser.info('创建脚本信息：%s' % TUnitTestName)
                         break
                 elif way == 'Function':
-                    before_line = line
                     TAutoTestName, TUnitTestName, line = new_file(CaseFile, FilePath, ex, line=line,
                                                                 feature_identifier=function_data_sing)
-                    if TAutoTestName == '0':
+                    if TAutoTestName in ('0', '00'):
                         LoggUser.info('创建脚本信息：%s' % TUnitTestName)
                         error_info[line] = TUnitTestName
                         break
-                    combination_function(TAutoTestName, TUnitTestName)
-                    line = before_line
-                    logging.debug('before_line:%s line:%s ' % (before_line, line))
+
                 if way == 'AllUint':
                     MakeTestCase(AutoTestName=TAutoTestName, UnitTestName=TUnitTestName, FilePath=FilePath, table=table,
                                  CaseFile=CaseFile, line=line)
@@ -458,7 +458,7 @@ def MakeTestCase(AutoTestName, UnitTestName, FilePath, table, CaseFile, TestCase
                 break
             else:
                 AutoTestName.writelines(EndTestCaseConten)
-                LoggUser.info('测试用例结束的内容：%s' %EndTestCaseConten)
+                LoggUser.info('测试用例结束的内容：%s' % EndTestCaseConten)
                 AutoTestName.close()
                 break
         except IndexError:
@@ -469,7 +469,7 @@ def MakeTestCase(AutoTestName, UnitTestName, FilePath, table, CaseFile, TestCase
             AutoTestName.close()
             break
         except Exception, e:
-            logging.error('运行错误:%s' %e)
+            logging.error('运行错误:%s' % e)
             AutoTestName.close()
             error_info[line] = e
             break
@@ -483,21 +483,34 @@ def CreateMain(FolderName, CurrentPath = CurrentPath, line=1):
     AllUintName = ''
     last_class_name = ''
     AllCalssName = {}
-    while (1):
-        try:
-            way = get_chars(CurrentPath, 2)
-            if way == 'AllUint':
+    way = get_chars(CurrentPath, 2)
+    if way == 'AllUint':
+        while (1):
+            try:
                 table = ex.sheet_by_name('interface')
                 ScriptName = table.cell(line, 1).value.encode('utf-8').strip()
                 ScriptName = get_chars(ScriptName)
                 test_sign = table.cell(line, 26).value.encode('utf-8')   # 测试用例生效标志
                 NesUnitTestName = ScriptName + 'Class'
-            elif way == 'Function':
+                if AllUintName.count(ScriptName) < 1 and ScriptName != '' and test_sign != '1':
+                    if line == 1 or AllUintName == '':
+                        AllUintName = ScriptName
+                        AllCalssName[line] = {ScriptName: NesUnitTestName}
+                    else:
+                        AllUintName = ScriptName + ',' + AllUintName
+                        AllCalssName[line] = {ScriptName: NesUnitTestName}
+                line += 1
+            except IndexError:
+                LoggUser.info('所有脚本名信息%s' % AllCalssName)
+                break
+    elif way == 'Function':
+        while(1):
+            try:
                 table = ex.sheet_by_name('data')
                 class_name = table.cell(line, 2).value                   # 取功能标识
                 ScriptName = check_there(class_name, 'get_function_description')
                 if ScriptName == 0:
-                    LoggUser.info('%s功能标识，找不到对应的脚本名称' %class_name)
+                    LoggUser.info('%s功能标识，找不到对应的脚本名称' % class_name)
                     break
                 test_case_name = lazy_pinyin(ScriptName, style=STYLE_TONE2)
                 ScriptName = ''
@@ -507,34 +520,34 @@ def CreateMain(FolderName, CurrentPath = CurrentPath, line=1):
                 if last_class_name == '' or last_class_name != class_name:
                     test_sign = str(check_there(class_name, 'check_test_case'))  # 测试用例生效标志
                     last_class_name = class_name
-            LoggUser.debug('line:%s 脚本信息的总数:%s  ScriptName:%s test_sign:%s '
-                           % (line, AllUintName.count(ScriptName), ScriptName, test_sign))
-            if AllUintName.count(ScriptName) < 1 and ScriptName != '' and test_sign != '1':
-                if line == 1 or AllUintName == '':
-                    AllUintName = ScriptName
-                    AllCalssName[line] = {ScriptName: NesUnitTestName}
-                else:
-                    AllUintName = ScriptName + ',' + AllUintName
-                    AllCalssName[line] = {ScriptName: NesUnitTestName}
-            line += 1
-        except IndexError:
-            LoggUser.debug('所有脚本名信息%s' % AllCalssName)
-            break
+                LoggUser.debug('line:%s 脚本信息的总数:%s  ScriptName:%s test_sign:%s '
+                       % (line, AllUintName.count(ScriptName), ScriptName, test_sign))
+                if AllUintName.count(ScriptName) < 1 and ScriptName != '' and test_sign != '0':
+                    if line == 1 or AllUintName == '':
+                        AllUintName = ScriptName
+                        AllCalssName[line] = {ScriptName: NesUnitTestName}
+                    else:
+                        AllUintName = ScriptName + ',' + AllUintName
+                        AllCalssName[line] = {ScriptName: NesUnitTestName}
+                line += 1
+            except IndexError:
+                LoggUser.info('所有脚本名信息%s' % AllCalssName)
+                break
 
     AutoTestName = open(UnitFileName, 'w')
     content = Template(MainStandard)
     content = content.substitute(FolderName=FolderName, UnitName=AllUintName)
-    LoggUser.debug('Content:%s' % content)
+    LoggUser.info('Content:\n%s' % content)
     AutoTestName.writelines(content)
     for k in sorted(AllCalssName.keys()):  # 按顺序增加
         twematter = AllCalssName[k]
         for key, v in sorted(twematter.items()):    #
             content = Template(MainContent)
             content = content.substitute(UnitName=key, ClassName=v)
-            LoggUser.debug('主函数内容:%s' % content)
+            LoggUser.info('主函数内容:%s' % content)
             AutoTestName.writelines(content)
     AutoTestName.writelines(MainEnd)
-    LoggUser.debug('MainEnd:%s' % MainEnd)
+    LoggUser.info('MainEnd:%s' % MainEnd)
     AutoTestName.close()
 
 
@@ -639,9 +652,9 @@ def file_processing(file_path, operation, target):
 
 if __name__ == '__main__':
     mode = raw_input(hint)
-    RunMode, CasePath, FilePath, FolderName= creation_method(mode)
+    RunMode, CasePath, FilePath, FolderName = creation_method(mode)
     GlobalConfiguration.ConfigInit(ConfPath, LoggUser)   # 配置全局变量
-    LoggUser.debug('RunMode:%s  CasePath:%s FilePath:%s FolderName:%s' %(RunMode, CasePath, FilePath, FolderName))
+    LoggUser.debug('RunMode:%s  CasePath:%s FilePath:%s FolderName:%s' % (RunMode, CasePath, FilePath, FolderName))
     if RunMode != 0:
         LoggUser.info('开始校验测试例的json数据正确性')
         if RunMode in ('1', '5'):                                    # 检查接口的列
@@ -674,19 +687,18 @@ if __name__ == '__main__':
                 state, info = file_processing(FilePath, 'only_reserve', '__init__.py')
                 if state == 1:
                     LoggUser.info('开始创建功能测试脚本')
-                    parameter_a, parameter_b, table_line=new_file(FolderName, FilePath, ex)
-                    LoggUser.debug('parameter_a:%s parameter_b:%s table_line:%s' %(parameter_a, parameter_b, table_line))
-                    if parameter_a != '0':
-                        combination_function(parameter_a, parameter_b)
+                    parameter_a, parameter_b, table_line = new_file(FolderName, FilePath, ex)
+                    LoggUser.debug('parameter_a:%s parameter_b:%s table_line:%s' % (parameter_a, parameter_b, table_line))
+                    if parameter_a not in ('0', '00'):
                         MakeTestCase(parameter_a, parameter_b, FilePath, ex, FolderName, function_Content_case,
                                      line=table_line)
                         CreateMain(FolderName, FilePath)
-                    else:
-                        error_info[table_line]=parameter_b
+                    elif parameter_a == '00':
+                        error_info[table_line] = parameter_b
                     LoggUser.info('创建功能测试脚本结束')
                     if len(error_info) > 0:
                         for key, value in error_info.items():
-                            LoggUser.info('创建功能测试脚本错误信息.第 %s 行，错误信息:%s' % (str(key), value))
+                            LoggUser.info('创建功能测试脚本错误信息.第 %s 行测试用例，错误信息:%s' % (str(key), value))
             else:
                  LoggUser.info('此运行方式暂时不支持')
         elif len(result) == 0 and int(mode) >= 4:
