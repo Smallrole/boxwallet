@@ -10,7 +10,7 @@ from Share import HTMLTestRunner
 
 
 def Report(FilePath, ReportTitle="Test Report", ReportDescription=None):
-    fp=file(FilePath, 'wb')
+    fp = file(FilePath, 'wb')
     return HTMLTestRunner.HTMLTestRunner(stream=fp,title=ReportTitle, description=ReportDescription), fp
 
 
@@ -18,13 +18,13 @@ def Report(FilePath, ReportTitle="Test Report", ReportDescription=None):
 """
 测试完成后或发生异常时
 """
-#邮件用户名，密码，收件从，主题，内容，文件名，传送方式0表示文字 1表示：html
+# 邮件用户名，密码，收件从，主题，内容，文件名，传送方式0表示文字 1表示：html
 def SenEmail(user, password,receive,subject,details,filename,datatype=0):
-    if datatype ==1:
-        paper=open(filename,'r')
-        details=paper.read()
+    if datatype == 1:
+        paper = open(filename, 'r')
+        details = paper.read()
         paper.close()
-        msg = MIMEText(details,'html','utf-8')
+        msg = MIMEText(details, 'html', 'utf-8')
     else:
         msg = MIMEText(details)
     msg["Subject"] = subject
@@ -36,10 +36,10 @@ def SenEmail(user, password,receive,subject,details,filename,datatype=0):
         s.sendmail(user, receive, msg.as_string())
         s.quit()
         print "Success!"
-    except smtplib.SMTPException,e:
-        print "Falied,%s"%e
+    except smtplib.SMTPException, e:
+        print "Falied, %s" % e
 
-if __name__ =='__main__':
+if __name__ == '__main__':
     _user='234975828@qq.com'
     _pwd='wgwjgnwipjarcbdh'
     _to='904263480@qq.com'
